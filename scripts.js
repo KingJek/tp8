@@ -39,10 +39,14 @@ function addSection(element) {
   element.innerHTML = "<p>Created by Jake Stephens</p>";
 }
 
-function loadFileInto(fromFile, whereTo) {
+function loadFileInto(fromIdentifier, fromList) {
 
 	// creating a new XMLHttpRequest object
 	ajax = new XMLHttpRequest();
+  
+  // define the fromFile value based on the PHP URL
+  fromFile = "recipes.php?id=" + fromIdentifier + "&list=" + fromList;
+  console.log("fromFile: " + fromFile);
 
 	// defines the GET/POST method, source, and async value of the AJAX object
 	ajax.open("GET", fromFile, false);
@@ -51,7 +55,24 @@ function loadFileInto(fromFile, whereTo) {
 	ajax.onreadystatechange = function() {
 		
 			if ((this.readyState == 4) && (this.status == 200)) {
-				document.getElementById(whereTo).innerHTML = this.responseText;
+        
+        console.log("AJAX JSON response: " + this.responseText);
+        
+        
+        // convert received JSON from PHP into JavaScript array
+        responseArray = JSON.parse(this.responseText);
+        responseHTML = "";
+        
+        if (this.responseText != 0) {
+        for (x=0; x < responseArray.length; x++) {
+          responseHTML += "<li>" + responseArray[x] + "</li>";
+          }
+        }
+
+        // figure out querySelector target
+        whereTo = "#" + fromList + " ul";
+        if (fromList == "directions") whereTo = "#" + fromList + " ol";
+				document.querySelector(whereTo).innerHTML = responseHTML;
 				
 			} else if ((this.readyState == 4) && (this.status != 200)) {
 				console.log("Error: " + this.responseText);
@@ -66,13 +87,11 @@ function loadFileInto(fromFile, whereTo) {
 }
 
 // object constructor for Recipe prototype
-function Recipe(recipeName, imageURL, contributorName, ingredientFilename, equipmentFilename, directionsFilename) {
+function Recipe(recipeName, imageURL, contributorName, recipeIdentifier) {
   this.name = recipeName;
   this.imgsrc = imageURL;
-  this.contributor = contributorName
-  this.ingFile = ingredientFilename;
-  this.equipFile = equipmentFilename;
-  this.dirFile = directionsFilename;
+  this.contributor = contributorName;
+  this.identifier = recipeIdentifier;
   
   // update the screen with this object's recipe information
   this.displayRecipe = function() {
@@ -87,9 +106,9 @@ function Recipe(recipeName, imageURL, contributorName, ingredientFilename, equip
     document.getElementById("recipeImg").src = this.imgsrc;
     
     // update the 3 columns of info
-    loadFileInto(this.ingFile, "ingredients");
-    loadFileInto(this.equipFile, "equipment");
-    loadFileInto(this.dirFile, "directions");
+    loadFileInto(this.identifier, "ingredients");
+    loadFileInto(this.identifier, "equipment");
+    loadFileInto(this.identifier, "directions");
   }
   
 }
@@ -98,28 +117,22 @@ SliderBurger = new Recipe(
   "Slider-Style Mini Burgers",
   "https://images.unsplash.com/photo-1456418047667-56bcd35b1a88?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
   "Jake Stephens",
-  "ingredients.html",
-  "equipment.html",
-  "directions.html"
-)
+  "SliderBurger"
+);
 
 LemonBar = new Recipe(
   "Lemon Bars",
   "https://images.unsplash.com/photo-1530077561647-4c376cd0ee7d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
   "Mary Anne Keovongphet",
-  "lemon-ingredients.html",
-  "lemon-equipment.html",
-  "lemon-directions.html"
-)
+  "LemonBar"
+);
 
 OnionChicken = new Recipe(
   "French Onion-Breaded Baked Chicken",
   "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
   "Owen Kapuza",
-  "chicken-ingredients.html",
-  "chicken-equipment.html",
-  "chicken-directions.html"
-)
+  "OnionChicken"
+);
 
 window.onload = function() {
   

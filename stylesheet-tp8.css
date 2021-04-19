@@ -17,7 +17,6 @@
   color: white;
   font-size: 25px;
   padding-right: 2vw;
-  postition: relative;
   top: 12vh;
   font-family: 'Roboto', sans-serif;
   text-decoration: none;
@@ -91,7 +90,6 @@ h4 {
   font-weight: bold;
   font-size: 25px;
   font-family: 'Chango', sans-serif;
-  postion: absolute;
   top: 25vh;
 }
 
